@@ -113,6 +113,7 @@ ThemeData _getAmoledDarkTheme(ThemeColor themeColor) {
       // AMOLED uses pure black for surface
       surface: Colors.black,
       background: Colors.black,
+      onPrimary: Colors.white,
     ),
     scaffoldBackgroundColor: Colors.black,
   );

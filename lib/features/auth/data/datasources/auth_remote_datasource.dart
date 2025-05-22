@@ -1,4 +1,5 @@
 import 'package:khazana_mutual_funds/core/error/failures.dart';
+import 'package:khazana_mutual_funds/core/logger/logger.dart';
 import 'package:khazana_mutual_funds/features/auth/data/models/user_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -22,6 +23,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         shouldCreateUser: true,
       );
     } catch (e) {
+      logError(e.toString());
       throw AuthFailure('Failed to send OTP: ${e.toString()}');
     }
   }
@@ -38,9 +40,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.user == null) {
         throw const AuthFailure('User not found after verification');
       }
-
+      // return UserModel(uid: '123', email: email);
       return UserModel(uid: response.user!.id, email: email);
     } catch (e) {
+      logError(e.toString());
       throw AuthFailure('Failed to verify OTP: ${e.toString()}');
     }
   }

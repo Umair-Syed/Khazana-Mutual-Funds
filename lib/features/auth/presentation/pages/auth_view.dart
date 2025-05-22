@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
+import 'package:go_router/go_router.dart';
+import 'package:khazana_mutual_funds/core/navigation/routes.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/bloc/auth/auth_bloc.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/bloc/auth/auth_event.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/bloc/auth/auth_state.dart';
+import 'package:khazana_mutual_funds/features/auth/presentation/widgets/email_input_widget.dart';
+import 'package:khazana_mutual_funds/features/auth/presentation/widgets/otp_verification_widget.dart';
+import 'package:khazana_mutual_funds/features/auth/presentation/widgets/welcome_widget.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView({super.key});
@@ -13,12 +17,12 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
-  final _emailController = TextEditingController();
-  String _otp = '';
+  final PageController _pageController = PageController();
+  String? _currentEmail;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -33,120 +37,59 @@ class _AuthViewState extends State<AuthView> {
                 content: Text(state.errorMessage ?? 'An error occurred'),
               ),
             );
+          } else if (state.status == AuthStateStatus.authenticated) {
+            // Navigate to home screen when authenticated
+            context.go(AppRoute.home.path);
           }
         },
         builder: (context, state) {
-          if (state.status == AuthStateStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          return PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(), // Disable swiping
+            children: [
+              // Welcome screen
+              WelcomeWidget(
+                onNext:
+                    () => _pageController.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    ),
+              ),
 
-          if (state.status == AuthStateStatus.otpSent) {
-            return _buildOtpVerificationUI(context, state);
-          }
+              // Email input screen
+              EmailInputWidget(
+                onEmailSubmit: (email) {
+                  _currentEmail = email;
+                  context.read<AuthBloc>().add(SendOtpEvent(email));
+                  _pageController.animateToPage(
+                    2,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+              ),
 
-          return _buildEmailEntryUI(context);
+              // OTP verification screen
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  final email = state.email ?? _currentEmail ?? '';
+                  return OtpVerificationWidget(
+                    email: email,
+                    onOtpSubmit: (otp) {
+                      context.read<AuthBloc>().add(
+                        VerifyOtpEvent(email: email, otp: otp),
+                      );
+                    },
+                    onResendOtp: () {
+                      context.read<AuthBloc>().add(SendOtpEvent(email));
+                    },
+                  );
+                },
+              ),
+            ],
+          );
         },
-      ),
-    );
-  }
-
-  Widget _buildEmailEntryUI(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Login with Email',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 48),
-            TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'Enter your email address',
-                prefixIcon: Icon(Icons.email),
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                if (_emailController.text.isNotEmpty) {
-                  context.read<AuthBloc>().add(
-                    SendOtpEvent(_emailController.text),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Get OTP'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildOtpVerificationUI(BuildContext context, AuthState state) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Verify OTP',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Enter the OTP sent to ${state.email}',
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 48),
-            OtpTextField(
-              numberOfFields: 6,
-              borderColor: Theme.of(context).primaryColor,
-              focusedBorderColor: Theme.of(context).primaryColor,
-              showFieldAsBox: true,
-              onCodeChanged: (String code) {},
-              onSubmit: (String verificationCode) {
-                _otp = verificationCode;
-              },
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                if (_otp.isNotEmpty && _otp.length == 6) {
-                  context.read<AuthBloc>().add(
-                    VerifyOtpEvent(email: state.email!, otp: _otp),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: const Text('Verify OTP'),
-            ),
-            const SizedBox(height: 16),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(SendOtpEvent(state.email!));
-              },
-              child: const Text('Resend OTP'),
-            ),
-          ],
-        ),
       ),
     );
   }
