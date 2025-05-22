@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,6 +30,7 @@ class OtpVerificationWidget extends StatefulWidget {
   final String email;
   final Function(String) onOtpSubmit;
   final VoidCallback onResendOtp;
+  final VoidCallback onEditEmail;
   final bool showErrorMessage;
   final String? errorMessage;
 
@@ -37,6 +39,7 @@ class OtpVerificationWidget extends StatefulWidget {
     required this.email,
     required this.onOtpSubmit,
     required this.onResendOtp,
+    required this.onEditEmail,
     this.showErrorMessage = false,
     this.errorMessage,
   });
@@ -291,9 +294,24 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                'OTP has been sent on $maskedEmail',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              Row(
+                children: [
+                  Text(
+                    'OTP has been sent on $maskedEmail',
+                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                  ),
+                  InkWell(
+                    onTap: widget.onEditEmail,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Icon(
+                        Icons.edit_rounded,
+                        size: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
               const Spacer(),

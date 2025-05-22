@@ -86,6 +86,13 @@ class _AuthViewState extends State<AuthView> {
                     onResendOtp: () {
                       context.read<AuthBloc>().add(SendOtpEvent(email));
                     },
+                    onEditEmail: () {
+                      _pageController.animateToPage(
+                        1,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
                   );
                 },
               ),
