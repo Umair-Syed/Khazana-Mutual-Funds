@@ -31,6 +31,8 @@ dependencies:
   path_provider: ^2.1.5
   hive_flutter: ^1.1.0
   go_router: ^15.1.2
+  supabase_flutter: ^2.9.0
+  flutter_otp_text_field: ^1.5.1+1
 
   flutter:
     sdk: flutter

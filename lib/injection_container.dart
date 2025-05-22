@@ -1,21 +1,53 @@
 import 'package:get_it/get_it.dart';
+import 'package:khazana_mutual_funds/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:khazana_mutual_funds/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:khazana_mutual_funds/features/auth/domain/repositories/auth_repository.dart';
+import 'package:khazana_mutual_funds/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:khazana_mutual_funds/features/auth/domain/usecases/send_otp_usecase.dart';
+import 'package:khazana_mutual_funds/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:khazana_mutual_funds/features/auth/domain/usecases/verify_otp_usecase.dart';
+import 'package:khazana_mutual_funds/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // Initialize Supabase
+  await Supabase.initialize(
+    url:
+        'https://oilkbisxnrbwkexellfs.supabase.co', // Replace with your Supabase URL
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pbGtiaXN4bnJid2tleGVsbGZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc4NDMzNTYsImV4cCI6MjA2MzQxOTM1Nn0.rBNBm26gvFK5bBQMZUa71sZxZmCHZtXIO7JxuAIvq3U', // Replace with your Supabase anon key
+  );
+
+  final supabaseClient = Supabase.instance.client;
+
+  // External
+  sl.registerLazySingleton<SupabaseClient>(() => supabaseClient);
+
   // Bloc
-  // sl.registerFactory(
-  //   () => Bloc(),
-  // );
+  sl.registerFactory(
+    () => AuthBloc(
+      sendOtpUseCase: sl(),
+      verifyOtpUseCase: sl(),
+      getCurrentUserUseCase: sl(),
+      signOutUseCase: sl(),
+    ),
+  );
 
-  // // Use cases
-  // sl.registerLazySingleton(() => GetConcreteNumberTrivia(sl()));
+  // Use cases
+  sl.registerLazySingleton(() => SendOtpUseCase(sl()));
+  sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
+  sl.registerLazySingleton(() => SignOutUseCase(sl()));
 
-  // // Repository
+  // Repository
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(remoteDataSource: sl()),
+  );
 
-  // // Data sources
-
-  // //! Core
-
-  // //! External
+  // Data sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(supabaseClient: sl()),
+  );
 }
