@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:khazana_mutual_funds/core/common_ui/theme/bloc/theme_cubit.dart';
 import 'package:khazana_mutual_funds/core/common_ui/theme/theme.dart';
@@ -9,6 +10,12 @@ class AppView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Lock orientation to portrait mode
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     return BlocProvider(
       create: (context) => ThemeCubit(),
       child: BlocBuilder<ThemeCubit, ThemeState>(
