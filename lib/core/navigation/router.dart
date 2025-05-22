@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:khazana_mutual_funds/core/extensions/color_extensions.dart';
 import 'package:khazana_mutual_funds/core/logger/logger.dart';
 import 'package:khazana_mutual_funds/core/navigation/routes.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/pages/auth_screen.dart';
@@ -110,23 +111,71 @@ class ScaffoldWithNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        onTap: (index) => navigationShell.goBranch(index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          border: Border(
+            top: BorderSide(color: context.dividerColor, width: 0.5),
+            bottom: BorderSide(color: context.dividerColor, width: 0.8),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.chart_bar),
-            label: 'Charts',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(CupertinoIcons.bookmark),
-            label: 'Wishlist',
-          ),
-        ],
+        ),
+        height: 80,
+        child: BottomNavigationBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          currentIndex: navigationShell.currentIndex,
+          onTap: (index) => navigationShell.goBranch(index),
+          items: [
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                CupertinoIcons.home,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4.0),
+                child: Icon(
+                  CupertinoIcons.home,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                ),
+              ),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                CupertinoIcons.chart_bar,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4.0),
+                child: Icon(
+                  CupertinoIcons.chart_bar,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                ),
+              ),
+              label: 'Charts',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(
+                CupertinoIcons.bookmark,
+                size: 18,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              icon: Padding(
+                padding: EdgeInsets.only(bottom: 4.0),
+                child: Icon(
+                  CupertinoIcons.bookmark,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                ),
+              ),
+              label: 'Wishlist',
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -123,15 +123,11 @@ FlexSchemeColor _getSchemeColorFromThemeColor(
 ) {
   switch (themeColor) {
     case ThemeColor.blue:
-      return isLight
-          ? FlexSchemeColor.from(
-            primary: const Color(0xFF0070DF),
-            secondary: const Color(0xFF005BB8),
-          )
-          : FlexSchemeColor.from(
-            primary: const Color(0xFF3B8EE8),
-            secondary: const Color(0xFF70A9EF),
-          );
+      return FlexSchemeColor.from(
+        primary: const Color(0xFF0070DF),
+        secondary: const Color(0xFF005BB8),
+      );
+
     case ThemeColor.green:
       return isLight
           ? FlexSchemeColor.from(
