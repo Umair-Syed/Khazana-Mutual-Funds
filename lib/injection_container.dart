@@ -8,6 +8,11 @@ import 'package:khazana_mutual_funds/features/auth/domain/usecases/send_otp_usec
 import 'package:khazana_mutual_funds/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:khazana_mutual_funds/features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/bloc/auth/auth_bloc.dart';
+import 'package:khazana_mutual_funds/features/charts/data/datasources/fund_data_source.dart';
+import 'package:khazana_mutual_funds/features/charts/data/repositories/fund_repository_impl.dart';
+import 'package:khazana_mutual_funds/features/charts/domain/repositories/fund_repository.dart';
+import 'package:khazana_mutual_funds/features/charts/domain/usecases/get_all_funds.dart';
+import 'package:khazana_mutual_funds/features/charts/presentation/bloc/fund_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final sl = GetIt.instance;
@@ -37,19 +42,27 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerFactory(() => FundBloc(getAllFunds: sl()));
+
   // Use cases
   sl.registerLazySingleton(() => SendOtpUseCase(sl()));
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
   sl.registerLazySingleton(() => GetCurrentUserUseCase(sl()));
   sl.registerLazySingleton(() => SignOutUseCase(sl()));
 
+  sl.registerLazySingleton(() => GetAllFunds(sl()));
+
   // Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(remoteDataSource: sl()),
+  );
+  sl.registerLazySingleton<FundRepository>(
+    () => FundRepositoryImpl(dataSource: sl()),
   );
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(supabaseClient: sl()),
   );
+  sl.registerLazySingleton<FundDataSource>(() => FundDataSourceImpl());
 }

@@ -114,3 +114,23 @@ class UserHolding {
     };
   }
 }
+
+class FundOverView {
+  final String id;
+  final String name;
+  final String category;
+  final double nav;
+  final double oneYearReturn;
+  final double threeYearReturn;
+  final double fiveYearReturn;
+
+  FundOverView({
+    required this.id,
+    required this.name,
+    required this.category,
+    required this.nav,
+    required this.oneYearReturn,
+    required this.threeYearReturn,
+    required this.fiveYearReturn,
+  });
+}

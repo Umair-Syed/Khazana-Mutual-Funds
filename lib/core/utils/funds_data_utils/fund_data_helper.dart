@@ -55,6 +55,169 @@ class FundDataHelper {
     );
   }
 
+  /// Returns an overview of a specific fund with performance metrics
+  static Future<FundOverView> getFundOverView(String fundId) async {
+    final funds = await _loadFullData();
+
+    return await compute<Map<String, dynamic>, FundOverView>((params) {
+      final fundId = params['fundId'] as String;
+      final funds = params['funds'] as List<Fund>;
+
+      // Find the fund by ID
+      final fund = funds.firstWhere(
+        (fund) => fund.id == fundId,
+        orElse:
+            () => Fund(
+              id: '',
+              name: '',
+              meta: FundMeta(aum: 0, category: ''),
+              navHistory: [],
+              userHolding: UserHolding(
+                investedAmount: 0,
+                units: 0,
+                purchaseNav: 0,
+                lastPurchaseDate: DateTime.now(),
+              ),
+            ),
+      );
+
+      if (fund.id.isEmpty || fund.navHistory.isEmpty) {
+        return FundOverView(
+          id: fundId,
+          name: 'Not Found',
+          category: 'N/A',
+          nav: 0,
+          oneYearReturn: 0,
+          threeYearReturn: 0,
+          fiveYearReturn: 0,
+        );
+      }
+
+      return _calculateFundOverview(fund);
+    }, {'fundId': fundId, 'funds': funds});
+  }
+
+  /// Returns overview for all funds
+  static Future<List<FundOverView>> getAllFundsOverview() async {
+    final funds = await _loadFullData();
+
+    return await compute<List<Fund>, List<FundOverView>>(
+      (funds) => funds.map((fund) => _calculateFundOverview(fund)).toList(),
+      funds,
+    );
+  }
+
+  /// Helper method to calculate fund overview metrics
+  static FundOverView _calculateFundOverview(Fund fund) {
+    if (fund.navHistory.isEmpty) {
+      return FundOverView(
+        id: fund.id,
+        name: fund.name,
+        category: fund.meta.category,
+        nav: 0,
+        oneYearReturn: 0,
+        threeYearReturn: 0,
+        fiveYearReturn: 0,
+      );
+    }
+
+    // Get current NAV (last date's NAV)
+    final currentNav = fund.navHistory.last.nav;
+    final lastDate = fund.navHistory.last.date;
+
+    // Find NAVs for comparison periods or use first NAV if not available
+    final firstNav = fund.navHistory.first.nav;
+
+    // Find NAV from 1 year ago
+    final oneYearAgoDate = DateTime(
+      lastDate.year - 1,
+      lastDate.month,
+      lastDate.day,
+    );
+    NavPoint? oneYearAgoNavPoint = _findClosestNavPoint(
+      fund.navHistory,
+      oneYearAgoDate,
+    );
+    final oneYearAgoNav = oneYearAgoNavPoint?.nav ?? firstNav;
+
+    // Find NAV from 3 years ago
+    final threeYearsAgoDate = DateTime(
+      lastDate.year - 3,
+      lastDate.month,
+      lastDate.day,
+    );
+    NavPoint? threeYearsAgoNavPoint = _findClosestNavPoint(
+      fund.navHistory,
+      threeYearsAgoDate,
+    );
+    final threeYearsAgoNav = threeYearsAgoNavPoint?.nav ?? firstNav;
+
+    // Find NAV from 5 years ago
+    final fiveYearsAgoDate = DateTime(
+      lastDate.year - 5,
+      lastDate.month,
+      lastDate.day,
+    );
+    NavPoint? fiveYearsAgoNavPoint = _findClosestNavPoint(
+      fund.navHistory,
+      fiveYearsAgoDate,
+    );
+    final fiveYearsAgoNav = fiveYearsAgoNavPoint?.nav ?? firstNav;
+
+    // Calculate returns as percentages
+    final oneYearReturn = ((currentNav - oneYearAgoNav) / oneYearAgoNav) * 100;
+    final threeYearReturn =
+        ((currentNav - threeYearsAgoNav) / threeYearsAgoNav) * 100;
+    final fiveYearReturn =
+        ((currentNav - fiveYearsAgoNav) / fiveYearsAgoNav) * 100;
+
+    return FundOverView(
+      id: fund.id,
+      name: fund.name,
+      category: fund.meta.category,
+      nav: currentNav,
+      oneYearReturn: oneYearReturn,
+      threeYearReturn: threeYearReturn,
+      fiveYearReturn: fiveYearReturn,
+    );
+  }
+
+  /// Helper method to find the closest NAV point to a given date
+  static NavPoint? _findClosestNavPoint(
+    List<NavPoint> navHistory,
+    DateTime targetDate,
+  ) {
+    // If history is empty, return null
+    if (navHistory.isEmpty) return null;
+
+    // Check if target date is before first nav point
+    if (targetDate.isBefore(navHistory.first.date)) return null;
+
+    // Try to find exact match or closest previous date
+    NavPoint? closestNavPoint;
+
+    for (final navPoint in navHistory) {
+      // If we find exact match, return it
+      if (navPoint.date.year == targetDate.year &&
+          navPoint.date.month == targetDate.month &&
+          navPoint.date.day == targetDate.day) {
+        return navPoint;
+      }
+
+      // If this nav point is before or on target date, it's a candidate
+      if (navPoint.date.isBefore(targetDate) ||
+          navPoint.date.isAtSameMomentAs(targetDate)) {
+        // If we don't have a closest yet, or this one is closer, update
+        if (closestNavPoint == null ||
+            navPoint.date.isAfter(closestNavPoint.date)) {
+          closestNavPoint = navPoint;
+        }
+      }
+    }
+
+    return closestNavPoint;
+  }
+
   /// Returns NAV history for a specific fund within a time range
   static Future<List<NavPoint>> getNavHistory(
     String fundId,

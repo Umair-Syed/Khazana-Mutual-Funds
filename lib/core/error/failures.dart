@@ -13,6 +13,10 @@ class ServerFailure extends Failure {
   const ServerFailure(super.message);
 }
 
+class DataFailure extends Failure {
+  const DataFailure(super.message);
+}
+
 class CacheFailure extends Failure {
   const CacheFailure(super.message);
 }
