@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:khazana_mutual_funds/core/utils/funds_data_utils/fund_data_helper.dart';
 import 'package:khazana_mutual_funds/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:khazana_mutual_funds/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:khazana_mutual_funds/features/auth/domain/repositories/auth_repository.dart';
@@ -24,6 +25,7 @@ Future<void> init() async {
 
   // External
   sl.registerLazySingleton<SupabaseClient>(() => supabaseClient);
+  sl.registerLazySingleton<FundDataHelper>(() => FundDataHelper());
 
   // Bloc
   sl.registerFactory(
