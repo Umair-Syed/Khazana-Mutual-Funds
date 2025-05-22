@@ -187,147 +187,210 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
       '*' * (widget.email.indexOf('@') - 1),
     );
 
-    return Container(
-      color: Colors.black,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              // Welcome back text
-              const Text(
-                'Welcome Back,',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+    return SafeArea(
+      child: Stack(
+        children: [
+          // Main content
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                // Welcome back text
+                const Text(
+                  'Welcome Back,',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-              const Row(
-                children: [
-                  Text(
-                    'We Missed You!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                const Row(
+                  children: [
+                    Text(
+                      'We Missed You!',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Text('🎉', style: TextStyle(fontSize: 20)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    children: [
+                      const TextSpan(text: 'Glad to have you back at '),
+                      TextSpan(
+                        text: 'Dhan Saarthi',
+                        style: TextStyle(
+                          color: Colors.blue[400],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 48),
+
+                const Text(
+                  'Enter OTP',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 28),
+
+                // OTP fields
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    6,
+                    (index) => _buildOtpField(index, Colors.white),
+                  ),
+                ),
+
+                if (_errorMessage != null && _hasAttemptedSubmit)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Text('🎉', style: TextStyle(fontSize: 20)),
-                ],
-              ),
-              const SizedBox(height: 8),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+
+                const SizedBox(height: 28),
+
+                // Resend OTP section
+                Row(
                   children: [
-                    const TextSpan(text: 'Glad to have you back at '),
-                    TextSpan(
-                      text: 'Dhan Saarthi',
+                    Text(
+                      'Didn\'t Receive OTP?',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: _canResend ? _resendOtp : null,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(50, 30),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        _canResend
+                            ? 'Resend'
+                            : 'Resend (${_secondsRemaining}s)',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              _canResend ? Colors.blue[400] : Colors.grey[600],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(
+                      'OTP has been sent on $maskedEmail',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    ),
+                    InkWell(
+                      onTap: widget.onEditEmail,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Icon(
+                          Icons.edit_rounded,
+                          size: 14,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                // Terms and policy text at the bottom
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'By signing in, you agree to our ',
                       style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade100,
+                      ),
+                    ),
+                    Text(
+                      'T&C',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.blue[400],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      ' and ',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade100,
+                      ),
+                    ),
+                    Text(
+                      'Privacy Policy',
+                      style: TextStyle(
+                        fontSize: 12,
                         color: Colors.blue[400],
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 48),
 
-              const Text(
-                'Enter OTP',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 28),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
 
-              // OTP fields
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                  6,
-                  (index) => _buildOtpField(index, Colors.white),
-                ),
-              ),
-
-              if (_errorMessage != null && _hasAttemptedSubmit)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    _errorMessage!,
-                    style: const TextStyle(color: Colors.red, fontSize: 12),
-                  ),
-                ),
-
-              const SizedBox(height: 28),
-
-              // Resend OTP section
-              Row(
-                children: [
-                  Text(
-                    'Didn\'t Receive OTP?',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: _canResend ? _resendOtp : null,
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: const Size(50, 30),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    child: Text(
-                      _canResend ? 'Resend' : 'Resend (${_secondsRemaining}s)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: _canResend ? Colors.blue[400] : Colors.grey[600],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    'OTP has been sent on $maskedEmail',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  InkWell(
-                    onTap: widget.onEditEmail,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Icon(
-                        Icons.edit_rounded,
-                        size: 14,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const Spacer(),
-
-              // Proceed button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
+          // Floating proceed button
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom:
+                MediaQuery.of(context).viewInsets.bottom +
+                80, // Position above keyboard
+            child: Center(
+              child: SizedBox(
+                width: 280,
                 child: ElevatedButton(
                   onPressed: _isOtpValid ? _submitOtp : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    disabledBackgroundColor: Colors.grey[900],
+                    backgroundColor:
+                        _isOtpValid
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
                     disabledForegroundColor: Colors.grey[700],
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color:
+                            _isOtpValid
+                                ? Colors.transparent
+                                : Colors.grey[700]!,
+                        width: 1,
+                      ),
                     ),
                   ),
                   child: BlocBuilder<AuthBloc, AuthState>(
@@ -352,44 +415,9 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                   ),
                 ),
               ),
-
-              const SizedBox(height: 24),
-
-              // Terms and policy text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'By signing in, you agree to our ',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    'T&C',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue[400],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    ' and ',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    'Privacy Policy',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue[400],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

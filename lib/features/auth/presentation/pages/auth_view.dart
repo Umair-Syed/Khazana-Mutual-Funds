@@ -29,76 +29,91 @@ class _AuthViewState extends State<AuthView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state.status == AuthStateStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? 'An error occurred'),
-              ),
-            );
-          } else if (state.status == AuthStateStatus.authenticated) {
-            // Navigate to home screen when authenticated
-            context.go(AppRoute.home.path);
-          }
-        },
-        builder: (context, state) {
-          return PageView(
-            controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(), // Disable swiping
-            children: [
-              // Welcome screen
-              WelcomeWidget(
-                onNext:
-                    () => _pageController.animateToPage(
-                      1,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    ),
-              ),
+      body: Stack(
+        children: [
+          // Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/auth_background.png',
+              fit: BoxFit.cover,
+              opacity: const AlwaysStoppedAnimation(0.04),
+            ),
+          ),
+          // Auth content
+          BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state.status == AuthStateStatus.error) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.errorMessage ?? 'An error occurred'),
+                  ),
+                );
+              } else if (state.status == AuthStateStatus.authenticated) {
+                // Navigate to home screen when authenticated
+                context.go(AppRoute.home.path);
+              }
+            },
+            builder: (context, state) {
+              return PageView(
+                controller: _pageController,
+                physics:
+                    const NeverScrollableScrollPhysics(), // Disable swiping
+                children: [
+                  // Welcome screen
+                  WelcomeWidget(
+                    onNext:
+                        () => _pageController.animateToPage(
+                          1,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        ),
+                  ),
 
-              // Email input screen
-              EmailInputWidget(
-                onEmailSubmit: (email) {
-                  _currentEmail = email;
-                  context.read<AuthBloc>().add(SendOtpEvent(email));
-                  _pageController.animateToPage(
-                    2,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
-                },
-              ),
-
-              // OTP verification screen
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, state) {
-                  final email = state.email ?? _currentEmail ?? '';
-                  return OtpVerificationWidget(
-                    email: email,
-                    showErrorMessage: state.status == AuthStateStatus.otpError,
-                    errorMessage: state.errorMessage,
-                    onOtpSubmit: (otp) {
-                      context.read<AuthBloc>().add(
-                        VerifyOtpEvent(email: email, otp: otp),
-                      );
-                    },
-                    onResendOtp: () {
+                  // Email input screen
+                  EmailInputWidget(
+                    onEmailSubmit: (email) {
+                      _currentEmail = email;
                       context.read<AuthBloc>().add(SendOtpEvent(email));
-                    },
-                    onEditEmail: () {
                       _pageController.animateToPage(
-                        1,
+                        2,
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                       );
                     },
-                  );
-                },
-              ),
-            ],
-          );
-        },
+                  ),
+
+                  // OTP verification screen
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      final email = state.email ?? _currentEmail ?? '';
+                      return OtpVerificationWidget(
+                        email: email,
+                        showErrorMessage:
+                            state.status == AuthStateStatus.otpError,
+                        errorMessage: state.errorMessage,
+                        onOtpSubmit: (otp) {
+                          context.read<AuthBloc>().add(
+                            VerifyOtpEvent(email: email, otp: otp),
+                          );
+                        },
+                        onResendOtp: () {
+                          context.read<AuthBloc>().add(SendOtpEvent(email));
+                        },
+                        onEditEmail: () {
+                          _pageController.animateToPage(
+                            1,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }

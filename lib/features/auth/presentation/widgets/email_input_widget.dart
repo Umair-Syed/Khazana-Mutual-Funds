@@ -40,110 +40,120 @@ class _EmailInputWidgetState extends State<EmailInputWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              // Welcome back text
-              const Text(
-                'Welcome Back,',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            // Welcome back text
+            const Text(
+              'Welcome Back,',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const Row(
+            ),
+            const Row(
+              children: [
+                Text(
+                  'We Missed You!',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: 8),
+                Text('🎉', style: TextStyle(fontSize: 20)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(color: Colors.grey, fontSize: 14),
                 children: [
-                  Text(
-                    'We Missed You!',
+                  const TextSpan(text: 'Glad to have you back at '),
+                  TextSpan(
+                    text: 'Dhan Saarthi',
                     style: TextStyle(
-                      fontSize: 24,
+                      color: Colors.blue[400],
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
                     ),
                   ),
-                  SizedBox(width: 8),
-                  Text('🎉', style: TextStyle(fontSize: 20)),
                 ],
               ),
-              const SizedBox(height: 8),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(color: Colors.grey, fontSize: 14),
-                  children: [
-                    const TextSpan(text: 'Glad to have you back at '),
-                    TextSpan(
-                      text: 'Dhan Saarthi',
-                      style: TextStyle(
-                        color: Colors.blue[400],
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 48),
+            ),
+            const SizedBox(height: 48),
 
-              const Text(
-                'Enter your email',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
+            const Text(
+              'Enter your email',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
               ),
-              const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
 
-              // Email input field
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[900],
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'user@example.com',
-                    hintStyle: TextStyle(color: Colors.grey[600]),
-                    border: InputBorder.none,
-                    prefixIcon: Icon(
-                      Icons.email_outlined,
-                      color: Colors.grey[600],
-                    ),
-                    prefixIconConstraints: const BoxConstraints(
-                      minWidth: 40,
-                      minHeight: 40,
-                    ),
+            // Email input field
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[900],
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withAlpha(30)),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                controller: _emailController,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'user@example.com',
+                  hintStyle: TextStyle(color: Colors.grey[600]),
+                  border: InputBorder.none,
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: Colors.grey[600],
                   ),
-                  keyboardType: TextInputType.emailAddress,
+                  prefixIconConstraints: const BoxConstraints(
+                    minWidth: 40,
+                    minHeight: 40,
+                  ),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
+            ),
 
-              const Spacer(),
+            const Spacer(),
 
-              // Proceed button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
+            // Proceed button
+            Center(
+              child: SizedBox(
+                width: 280,
                 child: ElevatedButton(
                   onPressed:
                       _isEmailValid
                           ? () => widget.onEmailSubmit(_emailController.text)
                           : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    disabledBackgroundColor: Colors.grey[900],
+                    backgroundColor:
+                        _isEmailValid
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.transparent,
+                    disabledBackgroundColor: Colors.transparent,
                     disabledForegroundColor: Colors.grey[700],
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color:
+                            _isEmailValid
+                                ? Colors.transparent
+                                : Colors.grey[700]!,
+                        width: 1,
+                      ),
                     ),
                   ),
                   child: BlocBuilder<AuthBloc, AuthState>(
@@ -168,55 +178,55 @@ class _EmailInputWidgetState extends State<EmailInputWidget> {
                   ),
                 ),
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-              // Terms and policy text
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'By signing in, you agree to our ',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    'T&C',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue[400],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    ' and ',
-                    style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                  ),
-                  Text(
-                    'Privacy Policy',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.blue[400],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 16),
-
-              // Page indicator
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(2),
+            // Terms and policy text
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'By signing in, you agree to our ',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade100),
+                ),
+                Text(
+                  'T&C',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue[400],
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                Text(
+                  ' and ',
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade100),
+                ),
+                Text(
+                  'Privacy Policy',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue[400],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
+
+            // Page indicator
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

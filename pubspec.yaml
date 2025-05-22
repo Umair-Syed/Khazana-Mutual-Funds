@@ -48,3 +48,5 @@ flutter:
   assets:
     - assets/
     - assets/logo.svg
+    - assets/images/
+    - assets/images/auth_background.png
