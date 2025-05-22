@@ -72,6 +72,7 @@ class _AuthViewState extends State<AuthView> {
                   // Email input screen
                   EmailInputWidget(
                     onEmailSubmit: (email) {
+                      FocusScope.of(context).unfocus();
                       _currentEmail = email;
                       context.read<AuthBloc>().add(SendOtpEvent(email));
                       _pageController.animateToPage(

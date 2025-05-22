@@ -8,13 +8,18 @@ import 'package:khazana_mutual_funds/features/charts/presentation/pages/charts_s
 import 'package:khazana_mutual_funds/features/fund_details/presentation/pages/wishlist_screen.dart';
 import 'package:khazana_mutual_funds/features/home/presentation/pages/home_screen.dart';
 import 'package:khazana_mutual_funds/features/wishlist/presentation/pages/wishlist_screen.dart';
+import 'package:khazana_mutual_funds/injection_container.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final GoRouter router = GoRouter(
   navigatorKey: rootNavigatorKey,
-  initialLocation: AppRoute.auth.path,
+  initialLocation:
+      sl<SupabaseClient>().auth.currentUser != null
+          ? AppRoute.home.path
+          : AppRoute.auth.path,
   // Error handler
   errorBuilder: (context, state) {
     logError("Router: Navigation error - ${state.error}");
