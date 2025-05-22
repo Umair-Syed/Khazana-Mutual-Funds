@@ -76,6 +76,8 @@ class _AuthViewState extends State<AuthView> {
                   final email = state.email ?? _currentEmail ?? '';
                   return OtpVerificationWidget(
                     email: email,
+                    showErrorMessage: state.status == AuthStateStatus.otpError,
+                    errorMessage: state.errorMessage,
                     onOtpSubmit: (otp) {
                       context.read<AuthBloc>().add(
                         VerifyOtpEvent(email: email, otp: otp),

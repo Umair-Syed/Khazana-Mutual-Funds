@@ -46,7 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     VerifyOtpEvent event,
     Emitter<AuthState> emit,
   ) async {
-    emit(state.copyWith(status: AuthStateStatus.loading));
+    emit(state.copyWith(status: AuthStateStatus.otpVerifyInProgress));
 
     final params = VerifyOtpParams(email: event.email, otp: event.otp);
 
@@ -55,8 +55,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) => emit(
         state.copyWith(
-          status: AuthStateStatus.error,
-          errorMessage: failure.message,
+          status: AuthStateStatus.otpError,
+          errorMessage: "Invalid OTP! Please try again",
         ),
       ),
       (user) => emit(

@@ -7,6 +7,8 @@ enum AuthStateStatus {
   authenticated,
   unauthenticated,
   otpSent,
+  otpError,
+  otpVerifyInProgress,
   error,
 }
 
