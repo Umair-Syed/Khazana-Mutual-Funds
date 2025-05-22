@@ -50,6 +50,8 @@ flutter:
     - assets/logo.svg
     - assets/images/
     - assets/images/auth_background.png
+    - assets/data/
+    - assets/data/funds.json
 
   fonts:
     - family: Gilroy
