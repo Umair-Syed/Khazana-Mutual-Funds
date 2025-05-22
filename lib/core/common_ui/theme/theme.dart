@@ -64,10 +64,8 @@ ThemeData _getLightTheme(ThemeColor themeColor) {
     ),
     keyColors: const FlexKeyColors(),
     useMaterial3: true,
-    // Add typography with Google Fonts
-    // fontFamily: GoogleFonts.openSans().fontFamily,
-  );
-  // .copyWith(textTheme: _getTextTheme(Brightness.light));
+    fontFamily: 'Gilroy',
+  ).copyWith(textTheme: _getTextTheme(Brightness.light));
 }
 
 ThemeData _getAmoledDarkTheme(ThemeColor themeColor) {
@@ -102,10 +100,10 @@ ThemeData _getAmoledDarkTheme(ThemeColor themeColor) {
     ),
     keyColors: const FlexKeyColors(),
     useMaterial3: true,
-    // fontFamily: GoogleFonts.openSans().fontFamily,
+    fontFamily: 'Gilroy',
     darkIsTrueBlack: true,
   ).copyWith(
-    // textTheme: _getTextTheme(Brightness.dark),
+    textTheme: _getTextTheme(Brightness.dark),
     colorScheme: FlexThemeData.dark(
       colors: schemeColor,
       useMaterial3: true,
@@ -127,12 +125,12 @@ FlexSchemeColor _getSchemeColorFromThemeColor(
     case ThemeColor.blue:
       return isLight
           ? FlexSchemeColor.from(
-            primary: Colors.blue,
-            secondary: Colors.blue.shade700,
+            primary: const Color(0xFF0070DF),
+            secondary: const Color(0xFF005BB8),
           )
           : FlexSchemeColor.from(
-            primary: Colors.blue.shade400,
-            secondary: Colors.blue.shade200,
+            primary: const Color(0xFF3B8EE8),
+            secondary: const Color(0xFF70A9EF),
           );
     case ThemeColor.green:
       return isLight
@@ -177,139 +175,155 @@ FlexSchemeColor _getSchemeColorFromThemeColor(
   }
 }
 
-// TextTheme _getTextTheme(Brightness brightness) {
-//   final headlineColor =
-//       brightness == Brightness.light ? Colors.black87 : Colors.white;
-//   const headlineWeight = FontWeight.w900;
-//   const headlineHeight = 1.2;
-//   const headlineLetterSpacing = 1.2;
+TextTheme _getTextTheme(Brightness brightness) {
+  final headlineColor =
+      brightness == Brightness.light ? Colors.black87 : Colors.white;
+  const headlineWeight = FontWeight.w900;
+  const headlineHeight = 1.2;
+  const headlineLetterSpacing = 1.2;
 
-//   final titleColor =
-//       brightness == Brightness.light ? Colors.black87 : Colors.white;
-//   const titleWeight = FontWeight.bold;
-//   const titleHeight = 1.2;
-//   const titleLetterSpacing = -0.96;
+  final titleColor =
+      brightness == Brightness.light ? Colors.black87 : Colors.white;
+  const titleWeight = FontWeight.bold;
+  const titleHeight = 1.2;
+  const titleLetterSpacing = -0.96;
 
-//   final bodyColor =
-//       brightness == Brightness.light ? Colors.black87 : Colors.white;
-//   const bodyWeight = FontWeight.normal;
-//   const bodyHeight = 1.5;
-//   const bodyLetterSpacing = 0.0;
+  final bodyColor =
+      brightness == Brightness.light ? Colors.black87 : Colors.white;
+  const bodyWeight = FontWeight.normal;
+  const bodyHeight = 1.5;
+  const bodyLetterSpacing = 0.0;
 
-//   final labelColor = titleColor;
+  final labelColor = titleColor;
+  const fontFamily = 'Gilroy';
 
-//   return TextTheme(
-//     // Diplay
-//     displayLarge: GoogleFonts.montserrat(
-//       fontSize: 24,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
-//     displayMedium: GoogleFonts.montserrat(
-//       fontSize: 16,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
-//     displaySmall: GoogleFonts.montserrat(
-//       fontSize: 14,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
-//     // Headline
-//     headlineLarge: GoogleFonts.openSans(
-//       fontSize: 24,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
-//     headlineMedium: GoogleFonts.openSans(
-//       fontSize: 20,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
-//     headlineSmall: GoogleFonts.openSans(
-//       fontSize: 18,
-//       height: headlineHeight,
-//       letterSpacing: headlineLetterSpacing,
-//       color: headlineColor,
-//       fontWeight: headlineWeight,
-//     ),
+  return TextTheme(
+    // Display
+    displayLarge: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 28,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: FontWeight.w900,
+    ),
+    displayMedium: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 20,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: FontWeight.w900,
+    ),
+    displaySmall: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 16,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: FontWeight.w900,
+    ),
+    // Headline
+    headlineLarge: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 24,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: headlineWeight,
+    ),
+    headlineMedium: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 20,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: headlineWeight,
+    ),
+    headlineSmall: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 18,
+      height: headlineHeight,
+      letterSpacing: headlineLetterSpacing,
+      color: headlineColor,
+      fontWeight: headlineWeight,
+    ),
 
-//     // Title
-//     titleLarge: GoogleFonts.openSans(
-//       fontSize: 20,
-//       height: titleHeight,
-//       letterSpacing: titleLetterSpacing,
-//       color: titleColor,
-//       fontWeight: titleWeight,
-//     ),
-//     titleMedium: GoogleFonts.openSans(
-//       fontSize: 18,
-//       height: titleHeight,
-//       letterSpacing: titleLetterSpacing,
-//       color: titleColor,
-//       fontWeight: titleWeight,
-//     ),
-//     titleSmall: GoogleFonts.openSans(
-//       fontSize: 14,
-//       height: titleHeight,
-//       letterSpacing: titleLetterSpacing,
-//       color: titleColor,
-//       fontWeight: titleWeight,
-//     ),
+    // Title
+    titleLarge: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 20,
+      height: titleHeight,
+      letterSpacing: titleLetterSpacing,
+      color: titleColor,
+      fontWeight: titleWeight,
+    ),
+    titleMedium: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 18,
+      height: titleHeight,
+      letterSpacing: titleLetterSpacing,
+      color: titleColor,
+      fontWeight: titleWeight,
+    ),
+    titleSmall: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 14,
+      height: titleHeight,
+      letterSpacing: titleLetterSpacing,
+      color: titleColor,
+      fontWeight: titleWeight,
+    ),
 
-//     // Body
-//     bodyLarge: GoogleFonts.openSans(
-//       fontSize: 18,
-//       height: bodyHeight,
-//       letterSpacing: bodyLetterSpacing,
-//       color: bodyColor,
-//       fontWeight: bodyWeight,
-//     ),
-//     bodyMedium: GoogleFonts.openSans(
-//       fontSize: 14,
-//       height: bodyHeight,
-//       letterSpacing: bodyLetterSpacing,
-//       color: bodyColor,
-//       fontWeight: bodyWeight,
-//     ),
-//     bodySmall: GoogleFonts.openSans(
-//       fontSize: 12,
-//       height: bodyHeight,
-//       color: bodyColor,
-//       fontWeight: bodyWeight,
-//     ),
+    // Body
+    bodyLarge: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 18,
+      height: bodyHeight,
+      letterSpacing: bodyLetterSpacing,
+      color: bodyColor,
+      fontWeight: bodyWeight,
+    ),
+    bodyMedium: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 14,
+      height: bodyHeight,
+      letterSpacing: bodyLetterSpacing,
+      color: bodyColor,
+      fontWeight: bodyWeight,
+    ),
+    bodySmall: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 12,
+      height: bodyHeight,
+      color: bodyColor,
+      fontWeight: bodyWeight,
+    ),
 
-//     // Label
-//     labelLarge: GoogleFonts.openSans(
-//       fontSize: 16,
-//       height: bodyHeight,
-//       letterSpacing: bodyLetterSpacing,
-//       color: labelColor,
-//       fontWeight: bodyWeight,
-//     ),
-//     labelMedium: GoogleFonts.openSans(
-//       fontSize: 14,
-//       height: bodyHeight,
-//       letterSpacing: bodyLetterSpacing,
-//       color: labelColor,
-//       fontWeight: bodyWeight,
-//     ),
-//     labelSmall: GoogleFonts.openSans(
-//       fontSize: 12,
-//       height: bodyHeight,
-//       letterSpacing: bodyLetterSpacing,
-//       color: labelColor,
-//       fontWeight: bodyWeight,
-//     ),
-//   );
-// }
+    // Label
+    labelLarge: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 16,
+      height: bodyHeight,
+      letterSpacing: bodyLetterSpacing,
+      color: labelColor,
+      fontWeight: bodyWeight,
+    ),
+    labelMedium: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 14,
+      height: bodyHeight,
+      letterSpacing: bodyLetterSpacing,
+      color: labelColor,
+      fontWeight: bodyWeight,
+    ),
+    labelSmall: TextStyle(
+      fontFamily: fontFamily,
+      fontSize: 12,
+      height: bodyHeight,
+      letterSpacing: bodyLetterSpacing,
+      color: labelColor,
+      fontWeight: bodyWeight,
+    ),
+  );
+}

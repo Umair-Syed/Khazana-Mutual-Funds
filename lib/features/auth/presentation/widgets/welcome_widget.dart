@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -25,17 +26,13 @@ class WelcomeWidget extends StatelessWidget {
                   child: SvgPicture.asset('assets/logo.svg', height: 180),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Welcome to',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                  ),
+                  style: Theme.of(context).textTheme.displayLarge,
                   textAlign: TextAlign.center,
                 ),
                 const Text(
-                  'DhanSaarthi !',
+                  'DhanSaarthi!',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w500,
@@ -62,9 +59,14 @@ class WelcomeWidget extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     shape: const CircleBorder(),
                     padding: const EdgeInsets.all(16),
-                    backgroundColor: Colors.blue,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
                   ),
-                  child: const Icon(Icons.arrow_forward, color: Colors.white),
+                  child: const Icon(
+                    CupertinoIcons.arrow_right,
+                    size: 24,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),

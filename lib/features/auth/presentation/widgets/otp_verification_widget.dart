@@ -229,7 +229,7 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                       TextSpan(
                         text: 'Dhan Saarthi',
                         style: TextStyle(
-                          color: Colors.blue[400],
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -290,7 +290,9 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                         style: TextStyle(
                           fontSize: 14,
                           color:
-                              _canResend ? Colors.blue[400] : Colors.grey[600],
+                              _canResend
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Colors.grey[600],
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -335,7 +337,7 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                       'T&C',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.blue[400],
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -350,7 +352,7 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                       'Privacy Policy',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.blue[400],
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -378,8 +380,9 @@ class _OtpVerificationWidgetState extends State<OtpVerificationWidget> {
                     backgroundColor:
                         _isOtpValid
                             ? Theme.of(context).colorScheme.primary
-                            : Colors.transparent,
-                    disabledBackgroundColor: Colors.transparent,
+                            : Theme.of(context).colorScheme.surfaceContainer,
+                    disabledBackgroundColor:
+                        Theme.of(context).colorScheme.surfaceContainer,
                     disabledForegroundColor: Colors.grey[700],
                     elevation: 0,
                     shape: RoundedRectangleBorder(
