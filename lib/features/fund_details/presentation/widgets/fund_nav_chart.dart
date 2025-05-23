@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:khazana_mutual_funds/core/utils/funds_data_utils/fund_data_helper.dart';
 import 'package:khazana_mutual_funds/core/utils/funds_data_utils/fund_model.dart';
 import 'package:khazana_mutual_funds/core/extensions/double_extensions.dart';
+import 'package:khazana_mutual_funds/features/fund_details/presentation/widgets/time_frame_buttons.dart';
 
 class FundNavChart extends StatefulWidget {
   final List<NavPoint> navHistory;
@@ -52,7 +53,11 @@ class _FundNavChartState extends State<FundNavChart> {
                   sideTitles: SideTitles(
                     showTitles: true,
                     getTitlesWidget:
-                        (value, meta) => _buildXAxisLabel(value, context),
+                        (value, meta) => NavXAxisLabel(
+                          value: value,
+                          navHistory: widget.navHistory,
+                          selectedTimeFrame: widget.selectedTimeFrame,
+                        ),
                     reservedSize: 40,
                     interval: _getXAxisInterval(),
                   ),
@@ -193,57 +198,46 @@ class _FundNavChartState extends State<FundNavChart> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildTimeFrameButton(context, NavHistoryRange.oneMonth, '1M'),
-              _buildTimeFrameButton(context, NavHistoryRange.threeMonths, '3M'),
-              _buildTimeFrameButton(context, NavHistoryRange.sixMonths, '6M'),
-              _buildTimeFrameButton(context, NavHistoryRange.oneYear, '1Y'),
-              _buildTimeFrameButton(context, NavHistoryRange.threeYear, '3Y'),
-              _buildTimeFrameButton(context, NavHistoryRange.max, 'MAX'),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.oneMonth,
+                label: '1M',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.threeMonths,
+                label: '3M',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.sixMonths,
+                label: '6M',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.oneYear,
+                label: '1Y',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.threeYear,
+                label: '3Y',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
+              TimeFrameButton(
+                timeFrame: NavHistoryRange.max,
+                label: 'MAX',
+                selectedTimeFrame: widget.selectedTimeFrame,
+                onTimeFrameChanged: widget.onTimeFrameChanged,
+              ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTimeFrameButton(
-    BuildContext context,
-    NavHistoryRange timeFrame,
-    String label,
-  ) {
-    final isSelected = widget.selectedTimeFrame == timeFrame;
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        child: InkWell(
-          onTap: () => widget.onTimeFrameChanged(timeFrame),
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color:
-                  isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color:
-                    isSelected
-                        ? Colors.white
-                        : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withAlpha(180),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -283,20 +277,74 @@ class _FundNavChartState extends State<FundNavChart> {
     });
   }
 
-  Widget _buildXAxisLabel(double value, BuildContext context) {
-    if (widget.navHistory.isEmpty) return const SizedBox.shrink();
+  LineTooltipItem _buildTooltipItem(
+    LineBarSpot touchedSpot,
+    BuildContext context,
+  ) {
+    if (widget.navHistory.isEmpty) {
+      return LineTooltipItem('', const TextStyle());
+    }
+
+    // Get the index from the touched spot
+    final index = touchedSpot.spotIndex.clamp(0, widget.navHistory.length - 1);
+    final navPoint = widget.navHistory[index];
+
+    return LineTooltipItem(
+      '${navPoint.date.day.toString().padLeft(2, '0')}-${navPoint.date.month.toString().padLeft(2, '0')}-${navPoint.date.year}\n—  NAV: ${navPoint.nav.formatAsIndianCurrency()}',
+      TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onSurface,
+        shadows: [
+          Shadow(
+            color: Theme.of(context).colorScheme.primary.withAlpha(180),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _getXAxisInterval() {
+    if (widget.navHistory.isEmpty) return 1.0;
+
+    // Calculate reasonable intervals based on data length
+    final length = widget.navHistory.length;
+    if (length <= 7) return 1.0 / (length - 1);
+    if (length <= 30) return 0.2; // Show 5 labels
+    if (length <= 90) return 0.25; // Show 4 labels
+    return 0.33; // Show 3 labels for longer periods
+  }
+}
+
+class NavXAxisLabel extends StatelessWidget {
+  final double value;
+  final List<NavPoint> navHistory;
+  final NavHistoryRange selectedTimeFrame;
+
+  const NavXAxisLabel({
+    super.key,
+    required this.value,
+    required this.navHistory,
+    required this.selectedTimeFrame,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (navHistory.isEmpty) return const SizedBox.shrink();
 
     // Convert normalized value (0-1) to actual index
-    final index = (value * (widget.navHistory.length - 1)).round().clamp(
+    final index = (value * (navHistory.length - 1)).round().clamp(
       0,
-      widget.navHistory.length - 1,
+      navHistory.length - 1,
     );
-    final navPoint = widget.navHistory[index];
+    final navPoint = navHistory[index];
     final date = navPoint.date;
 
     // Format date based on time range
     String dateText;
-    switch (widget.selectedTimeFrame) {
+    switch (selectedTimeFrame) {
       case NavHistoryRange.oneMonth:
       case NavHistoryRange.threeMonths:
         // Show day/month for shorter periods
@@ -323,46 +371,6 @@ class _FundNavChartState extends State<FundNavChart> {
           fontSize: 12,
           color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
         ),
-      ),
-    );
-  }
-
-  double _getXAxisInterval() {
-    if (widget.navHistory.isEmpty) return 1.0;
-
-    // Calculate reasonable intervals based on data length
-    final length = widget.navHistory.length;
-    if (length <= 7) return 1.0 / (length - 1);
-    if (length <= 30) return 0.2; // Show 5 labels
-    if (length <= 90) return 0.25; // Show 4 labels
-    return 0.33; // Show 3 labels for longer periods
-  }
-
-  LineTooltipItem _buildTooltipItem(
-    LineBarSpot touchedSpot,
-    BuildContext context,
-  ) {
-    if (widget.navHistory.isEmpty) {
-      return LineTooltipItem('', const TextStyle());
-    }
-
-    // Get the index from the touched spot
-    final index = touchedSpot.spotIndex.clamp(0, widget.navHistory.length - 1);
-    final navPoint = widget.navHistory[index];
-
-    return LineTooltipItem(
-      '${navPoint.date.day.toString().padLeft(2, '0')}-${navPoint.date.month.toString().padLeft(2, '0')}-${navPoint.date.year}\n—  NAV: ${navPoint.nav.formatAsIndianCurrency()}',
-      TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: Theme.of(context).colorScheme.onSurface,
-        shadows: [
-          Shadow(
-            color: Theme.of(context).colorScheme.primary.withAlpha(180),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
     );
   }

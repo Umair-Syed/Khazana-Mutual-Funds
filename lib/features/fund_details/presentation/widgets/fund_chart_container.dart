@@ -36,7 +36,12 @@ class _FundChartContainerState extends State<FundChartContainer> {
     return Column(
       children: [
         // Chart Header
-        _buildChartHeader(context),
+        ChartHeader(
+          selectedChartType: selectedChartType,
+          changeAmount: widget.changeAmount,
+          changePercentage: widget.changePercentage,
+          onChartTypeToggle: _toggleChartType,
+        ),
 
         const SizedBox(height: 16),
 
@@ -46,21 +51,86 @@ class _FundChartContainerState extends State<FundChartContainer> {
     );
   }
 
-  Widget _buildChartHeader(BuildContext context) {
+  void _toggleChartType() {
+    setState(() {
+      selectedChartType =
+          selectedChartType == ChartType.nav
+              ? ChartType.userInvestment
+              : ChartType.nav;
+    });
+  }
+
+  Widget _buildChartContent() {
+    switch (selectedChartType) {
+      case ChartType.nav:
+        return FundNavChart(
+          navHistory: widget.navHistory,
+          selectedTimeFrame: widget.selectedTimeFrame,
+          onTimeFrameChanged: widget.onTimeFrameChanged,
+        );
+      case ChartType.userInvestment:
+        return UserInvestmentChart(
+          currentFundId: widget.currentFundId,
+          currentFundNavHistory: widget.navHistory,
+          selectedTimeFrame: widget.selectedTimeFrame,
+          onTimeFrameChanged: widget.onTimeFrameChanged,
+        );
+    }
+  }
+}
+
+class ChartHeader extends StatelessWidget {
+  final ChartType selectedChartType;
+  final double changeAmount;
+  final double changePercentage;
+  final VoidCallback onChartTypeToggle;
+
+  const ChartHeader({
+    super.key,
+    required this.selectedChartType,
+    required this.changeAmount,
+    required this.changePercentage,
+    required this.onChartTypeToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Left side: Chart change info or legend for investment chart
         selectedChartType == ChartType.nav
-            ? _buildNavChartInfo(context)
-            : _buildInvestmentChartLegend(context),
+            ? NavChartInfo(
+              changeAmount: changeAmount,
+              changePercentage: changePercentage,
+            )
+            : InvestmentChartLegend(changePercentage: changePercentage),
         // Right side: Chart toggle buttons
-        Row(children: [_buildChartToggleButton(context)]),
+        Row(
+          children: [
+            ChartToggleButton(
+              selectedChartType: selectedChartType,
+              onToggle: onChartTypeToggle,
+            ),
+          ],
+        ),
       ],
     );
   }
+}
 
-  Widget _buildNavChartInfo(BuildContext context) {
+class NavChartInfo extends StatelessWidget {
+  final double changeAmount;
+  final double changePercentage;
+
+  const NavChartInfo({
+    super.key,
+    required this.changeAmount,
+    required this.changePercentage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
         Container(
@@ -81,19 +151,26 @@ class _FundChartContainerState extends State<FundChartContainer> {
         ),
         const SizedBox(width: 8),
         Text(
-          '${widget.changePercentage.abs().toStringAsFixed(2)}%',
+          '${changePercentage.abs().toStringAsFixed(2)}%',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         const SizedBox(width: 8),
         Text(
-          '(${widget.changeAmount.toStringAsFixed(2)})',
+          '(${changeAmount.toStringAsFixed(2)})',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );
   }
+}
 
-  Widget _buildInvestmentChartLegend(BuildContext context) {
+class InvestmentChartLegend extends StatelessWidget {
+  final double changePercentage;
+
+  const InvestmentChartLegend({super.key, required this.changePercentage});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -117,7 +194,7 @@ class _FundChartContainerState extends State<FundChartContainer> {
             ),
             const SizedBox(width: 8),
             Text(
-              '${widget.changePercentage.abs().toStringAsFixed(2)}%',
+              '${changePercentage.abs().toStringAsFixed(2)}%',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -156,22 +233,24 @@ class _FundChartContainerState extends State<FundChartContainer> {
       ],
     );
   }
+}
 
-  Widget _buildChartToggleButton(BuildContext context) {
+class ChartToggleButton extends StatelessWidget {
+  final ChartType selectedChartType;
+  final VoidCallback onToggle;
+
+  const ChartToggleButton({
+    super.key,
+    required this.selectedChartType,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final isNavSelected = selectedChartType == ChartType.nav;
 
     return ElevatedButton(
-      onPressed: () {
-        if (isNavSelected) {
-          setState(() {
-            selectedChartType = ChartType.userInvestment;
-          });
-        } else {
-          setState(() {
-            selectedChartType = ChartType.nav;
-          });
-        }
-      },
+      onPressed: onToggle,
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -194,23 +273,5 @@ class _FundChartContainerState extends State<FundChartContainer> {
         ),
       ),
     );
-  }
-
-  Widget _buildChartContent() {
-    switch (selectedChartType) {
-      case ChartType.nav:
-        return FundNavChart(
-          navHistory: widget.navHistory,
-          selectedTimeFrame: widget.selectedTimeFrame,
-          onTimeFrameChanged: widget.onTimeFrameChanged,
-        );
-      case ChartType.userInvestment:
-        return UserInvestmentChart(
-          currentFundId: widget.currentFundId,
-          currentFundNavHistory: widget.navHistory,
-          selectedTimeFrame: widget.selectedTimeFrame,
-          onTimeFrameChanged: widget.onTimeFrameChanged,
-        );
-    }
   }
 }
