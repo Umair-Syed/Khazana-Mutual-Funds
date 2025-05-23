@@ -144,7 +144,7 @@ class LoadedView extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 48),
 
               // Investment Calculator
               FundCalculator(

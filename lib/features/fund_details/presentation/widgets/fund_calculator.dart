@@ -48,6 +48,7 @@ class _FundCalculatorState extends State<FundCalculator> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: theme.dividerColor.withAlpha(120), width: 1),
       ),
