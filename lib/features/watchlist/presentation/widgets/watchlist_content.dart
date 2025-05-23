@@ -184,24 +184,12 @@ class WatchlistContent extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Add mutual funds to track their performance',
+              'Add mutual funds to track their performance.\nAdd a watchlist to group them together.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurfaceVariant.withAlpha(180),
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: onAddFund,
-              icon: const Icon(Icons.add),
-              label: const Text('Add Funds'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
               ),
             ),
           ],
