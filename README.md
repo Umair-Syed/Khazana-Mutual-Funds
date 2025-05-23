@@ -57,6 +57,7 @@ This project follows **Clean Architecture** principles, ensuring maintainable, t
 - **Repository Pattern** - Abstracted data access layer
 
 ## 🎥 Video Walkthrough
+https://github.com/user-attachments/assets/58a09072-ee14-446e-bf79-7ace5b6500d7
 
 ## 📥 Download & Test
 
