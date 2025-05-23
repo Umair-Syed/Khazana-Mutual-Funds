@@ -218,6 +218,34 @@ class FundDataHelper {
     return closestNavPoint;
   }
 
+  static Future<Fund> getFundsAllDataFromId(String fundId) async {
+    final funds = await _loadFullData();
+
+    return await compute<Map<String, dynamic>, Fund>((params) {
+      final fundId = params['fundId'] as String;
+      final funds = params['funds'] as List<Fund>;
+
+      final fund = funds.firstWhere(
+        (fund) => fund.id == fundId,
+        orElse:
+            () => Fund(
+              id: '',
+              name: '',
+              meta: FundMeta(aum: 0, category: ''),
+              navHistory: [],
+              userHolding: UserHolding(
+                investedAmount: 0,
+                units: 0,
+                purchaseNav: 0,
+                lastPurchaseDate: DateTime.now(),
+              ),
+            ),
+      );
+
+      return fund;
+    }, {'fundId': fundId, 'funds': funds});
+  }
+
   /// Returns NAV history for a specific fund within a time range
   static Future<List<NavPoint>> getNavHistory(
     String fundId,
@@ -327,4 +355,11 @@ class FundDataHelper {
 }
 
 /// Enum for different NAV history time ranges
-enum NavHistoryRange { oneMonth, threeMonths, sixMonths, oneYear, max }
+enum NavHistoryRange {
+  oneMonth,
+  threeMonths,
+  sixMonths,
+  oneYear,
+  threeYear,
+  max,
+}

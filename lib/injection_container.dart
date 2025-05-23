@@ -14,6 +14,11 @@ import 'package:khazana_mutual_funds/features/charts/domain/repositories/fund_re
 import 'package:khazana_mutual_funds/features/charts/domain/usecases/get_all_funds.dart';
 import 'package:khazana_mutual_funds/features/charts/presentation/bloc/fund_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:khazana_mutual_funds/features/fund_details/data/datasources/fund_details_data_source.dart';
+import 'package:khazana_mutual_funds/features/fund_details/data/repositories/fund_details_repository_impl.dart';
+import 'package:khazana_mutual_funds/features/fund_details/domain/repositories/fund_details_repository.dart';
+import 'package:khazana_mutual_funds/features/fund_details/domain/usecases/get_fund_details.dart';
+import 'package:khazana_mutual_funds/features/fund_details/presentation/bloc/fund_details_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -44,6 +49,10 @@ Future<void> init() async {
 
   sl.registerFactory(() => FundBloc(getAllFunds: sl()));
 
+  // Fund Details
+  // Bloc
+  sl.registerFactory(() => FundDetailsBloc(getFundDetails: sl()));
+
   // Use cases
   sl.registerLazySingleton(() => SendOtpUseCase(sl()));
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
@@ -51,6 +60,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SignOutUseCase(sl()));
 
   sl.registerLazySingleton(() => GetAllFunds(sl()));
+  sl.registerLazySingleton(() => GetFundDetails(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -59,10 +69,16 @@ Future<void> init() async {
   sl.registerLazySingleton<FundRepository>(
     () => FundRepositoryImpl(dataSource: sl()),
   );
+  sl.registerLazySingleton<FundDetailsRepository>(
+    () => FundDetailsRepositoryImpl(dataSource: sl()),
+  );
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(supabaseClient: sl()),
   );
   sl.registerLazySingleton<FundDataSource>(() => FundDataSourceImpl());
+  sl.registerLazySingleton<FundDetailsDataSource>(
+    () => FundDetailsDataSourceImpl(),
+  );
 }

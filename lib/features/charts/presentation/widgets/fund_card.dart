@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:khazana_mutual_funds/core/extensions/color_extensions.dart';
+import 'package:khazana_mutual_funds/core/navigation/routes.dart';
 import '../../domain/entities/fund_entity.dart';
 
 class FundCard extends StatelessWidget {
@@ -10,93 +12,102 @@ class FundCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      color: theme.colorScheme.surfaceContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outlineVariant.withAlpha(190),
+    return InkWell(
+      onTap: () {
+        context.pushNamed(
+          AppRoute.fundDetails.name,
+          pathParameters: {'fundId': fund.id},
+        );
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        color: theme.colorScheme.surfaceContainer,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: theme.colorScheme.outlineVariant.withAlpha(190),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    fund.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Row(
-                  children: [
-                    Text(
-                      'NAV ',
-                      style: TextStyle(
-                        color: theme.colorScheme.onSurface.withAlpha(180),
-                        fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      fund.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
                       ),
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      '₹${fund.nav.toStringAsFixed(2)}',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    fund.category,
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withAlpha(180),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
-                Row(
-                  children: [
-                    Text(
-                      '1D ',
+                  const SizedBox(width: 14),
+                  Row(
+                    children: [
+                      Text(
+                        'NAV ',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface.withAlpha(180),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '₹${fund.nav.toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      fund.category,
                       style: TextStyle(
                         color: theme.colorScheme.onSurface.withAlpha(180),
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      '${fund.oneYearReturn.toStringAsFixed(2)}%',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '1D ',
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurface.withAlpha(180),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Divider(color: context.dividerColor, height: 1, thickness: 1),
-            const SizedBox(height: 8),
-            PerformanceMetricsRow(
-              oneYearReturn: fund.oneYearReturn,
-              threeYearReturn: fund.threeYearReturn,
-              fiveYearReturn: fund.fiveYearReturn,
-              expenseRatio: fund.expenseRatio,
-            ),
-          ],
+                      Text(
+                        '${fund.oneYearReturn.toStringAsFixed(2)}%',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Divider(color: context.dividerColor, height: 1, thickness: 1),
+              const SizedBox(height: 8),
+              PerformanceMetricsRow(
+                oneYearReturn: fund.oneYearReturn,
+                threeYearReturn: fund.threeYearReturn,
+                fiveYearReturn: fund.fiveYearReturn,
+                expenseRatio: fund.expenseRatio,
+              ),
+            ],
+          ),
         ),
       ),
     );

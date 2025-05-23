@@ -6,7 +6,7 @@ import 'package:khazana_mutual_funds/core/logger/logger.dart';
 import 'package:khazana_mutual_funds/core/navigation/routes.dart';
 import 'package:khazana_mutual_funds/features/auth/presentation/pages/auth_screen.dart';
 import 'package:khazana_mutual_funds/features/charts/presentation/pages/charts_screen.dart';
-import 'package:khazana_mutual_funds/features/fund_details/presentation/pages/wishlist_screen.dart';
+import 'package:khazana_mutual_funds/features/fund_details/presentation/pages/fund_details_screen.dart';
 import 'package:khazana_mutual_funds/features/home/presentation/pages/home_screen.dart';
 import 'package:khazana_mutual_funds/features/wishlist/presentation/pages/wishlist_screen.dart';
 import 'package:khazana_mutual_funds/injection_container.dart';
