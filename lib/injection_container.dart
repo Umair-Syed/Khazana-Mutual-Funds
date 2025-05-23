@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:khazana_mutual_funds/core/utils/funds_data_utils/fund_data_helper.dart';
 import 'package:khazana_mutual_funds/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:khazana_mutual_funds/features/auth/data/repositories/auth_repository_impl.dart';
@@ -36,6 +37,9 @@ import 'package:khazana_mutual_funds/features/watchlist/presentation/bloc/watchl
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // Load environment variables
+  await dotenv.load(fileName: ".env");
+
   // Initialize Hive
   await Hive.initFlutter();
 
@@ -47,10 +51,8 @@ Future<void> init() async {
 
   // Initialize Supabase
   await Supabase.initialize(
-    url:
-        'https://oilkbisxnrbwkexellfs.supabase.co', // Replace with your Supabase URL
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pbGtiaXN4bnJid2tleGVsbGZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc4NDMzNTYsImV4cCI6MjA2MzQxOTM1Nn0.rBNBm26gvFK5bBQMZUa71sZxZmCHZtXIO7JxuAIvq3U', // Replace with your Supabase anon key
+    url: dotenv.env['SUPABASE_URL']!,
+    anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
 
   final supabaseClient = Supabase.instance.client;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../bloc/watchlist_state.dart';
+import '../../../bloc/watchlist_state.dart';
 import 'dart:ui';
 
 class WatchlistsSheet extends StatelessWidget {

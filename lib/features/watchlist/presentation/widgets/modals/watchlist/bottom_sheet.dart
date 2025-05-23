@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/watchlist_bloc.dart';
-import '../../bloc/watchlist_state.dart';
+import '../../../bloc/watchlist_bloc.dart';
+import '../../../bloc/watchlist_state.dart';
 import 'watchlists_sheet.dart';
 import 'create_watchlist_sheet.dart';
 import 'dart:ui';
