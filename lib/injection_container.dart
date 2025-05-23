@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:khazana_mutual_funds/core/utils/funds_data_utils/fund_data_helper.dart';
 import 'package:khazana_mutual_funds/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:khazana_mutual_funds/features/auth/data/repositories/auth_repository_impl.dart';
@@ -19,10 +20,31 @@ import 'package:khazana_mutual_funds/features/fund_details/data/repositories/fun
 import 'package:khazana_mutual_funds/features/fund_details/domain/repositories/fund_details_repository.dart';
 import 'package:khazana_mutual_funds/features/fund_details/domain/usecases/get_fund_details.dart';
 import 'package:khazana_mutual_funds/features/fund_details/presentation/bloc/fund_details_bloc.dart';
+import 'package:khazana_mutual_funds/features/watchlist/data/datasources/watchlist_local_datasource.dart';
+import 'package:khazana_mutual_funds/features/watchlist/data/models/watchlist_model.dart';
+import 'package:khazana_mutual_funds/features/watchlist/data/repositories/watchlist_repository_impl.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/repositories/watchlist_repository.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/get_all_watchlists.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/create_watchlist.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/delete_watchlist.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/update_watchlist_name.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/add_fund_to_watchlist.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/remove_fund_from_watchlist.dart';
+import 'package:khazana_mutual_funds/features/watchlist/domain/usecases/get_available_funds.dart';
+import 'package:khazana_mutual_funds/features/watchlist/presentation/bloc/watchlist_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // Initialize Hive
+  await Hive.initFlutter();
+
+  // Register Hive adapters
+  Hive.registerAdapter(WatchlistModelAdapter());
+
+  // Open Hive boxes
+  await Hive.openBox<WatchlistModel>('watchlists');
+
   // Initialize Supabase
   await Supabase.initialize(
     url:
@@ -53,6 +75,20 @@ Future<void> init() async {
   // Bloc
   sl.registerFactory(() => FundDetailsBloc(getFundDetails: sl()));
 
+  // Watchlist
+  // Bloc
+  sl.registerFactory(
+    () => WatchlistBloc(
+      getAllWatchlists: sl(),
+      createWatchlist: sl(),
+      deleteWatchlist: sl(),
+      updateWatchlistName: sl(),
+      addFundToWatchlist: sl(),
+      removeFundFromWatchlist: sl(),
+      getAvailableFunds: sl(),
+    ),
+  );
+
   // Use cases
   sl.registerLazySingleton(() => SendOtpUseCase(sl()));
   sl.registerLazySingleton(() => VerifyOtpUseCase(sl()));
@@ -61,6 +97,15 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => GetAllFunds(sl()));
   sl.registerLazySingleton(() => GetFundDetails(sl()));
+
+  // Watchlist use cases
+  sl.registerLazySingleton(() => GetAllWatchlists(sl()));
+  sl.registerLazySingleton(() => CreateWatchlist(sl()));
+  sl.registerLazySingleton(() => DeleteWatchlist(sl()));
+  sl.registerLazySingleton(() => UpdateWatchlistName(sl()));
+  sl.registerLazySingleton(() => AddFundToWatchlist(sl()));
+  sl.registerLazySingleton(() => RemoveFundFromWatchlist(sl()));
+  sl.registerLazySingleton(() => GetAvailableFunds(sl()));
 
   // Repository
   sl.registerLazySingleton<AuthRepository>(
@@ -72,6 +117,9 @@ Future<void> init() async {
   sl.registerLazySingleton<FundDetailsRepository>(
     () => FundDetailsRepositoryImpl(dataSource: sl()),
   );
+  sl.registerLazySingleton<WatchlistRepository>(
+    () => WatchlistRepositoryImpl(localDataSource: sl()),
+  );
 
   // Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -80,5 +128,8 @@ Future<void> init() async {
   sl.registerLazySingleton<FundDataSource>(() => FundDataSourceImpl());
   sl.registerLazySingleton<FundDetailsDataSource>(
     () => FundDetailsDataSourceImpl(),
+  );
+  sl.registerLazySingleton<WatchlistLocalDataSource>(
+    () => WatchlistLocalDataSourceImpl(),
   );
 }

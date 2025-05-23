@@ -182,7 +182,7 @@ TextTheme _getTextTheme(Brightness brightness) {
       brightness == Brightness.light ? Colors.black87 : Colors.white;
   const titleWeight = FontWeight.bold;
   const titleHeight = 1.2;
-  const titleLetterSpacing = -0.96;
+  const titleLetterSpacing = 0.0;
 
   final bodyColor =
       brightness == Brightness.light ? Colors.black87 : Colors.white;

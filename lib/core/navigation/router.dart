@@ -8,7 +8,7 @@ import 'package:khazana_mutual_funds/features/auth/presentation/pages/auth_scree
 import 'package:khazana_mutual_funds/features/charts/presentation/pages/charts_screen.dart';
 import 'package:khazana_mutual_funds/features/fund_details/presentation/pages/fund_details_screen.dart';
 import 'package:khazana_mutual_funds/features/home/presentation/pages/home_screen.dart';
-import 'package:khazana_mutual_funds/features/wishlist/presentation/pages/wishlist_screen.dart';
+import 'package:khazana_mutual_funds/features/watchlist/presentation/pages/watchlist_screen.dart';
 import 'package:khazana_mutual_funds/injection_container.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -74,7 +74,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: AppRoute.wishlist.path,
               name: AppRoute.wishlist.name,
-              builder: (context, state) => const WishlistScreen(),
+              builder: (context, state) => const WatchlistScreen(),
             ),
           ],
         ),
@@ -172,7 +172,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
                 ),
               ),
-              label: 'Wishlist',
+              label: 'Watchlist',
             ),
           ],
         ),
