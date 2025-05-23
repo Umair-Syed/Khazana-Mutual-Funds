@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:khazana_mutual_funds/features/fund_details/presentation/bloc/fund_details_bloc.dart';
 import 'package:khazana_mutual_funds/features/fund_details/presentation/widgets/fund_calculator.dart';
-import 'package:khazana_mutual_funds/features/fund_details/presentation/widgets/fund_nav_chart.dart';
+import 'package:khazana_mutual_funds/features/fund_details/presentation/widgets/fund_chart_container.dart';
 import 'package:khazana_mutual_funds/features/fund_details/presentation/widgets/user_holdings_card.dart';
 
 class FundDetailsView extends StatelessWidget {
@@ -131,8 +131,8 @@ class LoadedView extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // NAV Chart
-              FundNavChart(
+              FundChartContainer(
+                currentFundId: fundDetails.id,
                 navHistory: state.filteredNavHistory,
                 selectedTimeFrame: state.selectedTimeFrame,
                 changeAmount: state.changeInTimeFrame,
